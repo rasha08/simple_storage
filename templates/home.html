@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Uploader</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="flex h-screen w-screen flex-col items-center justify-center bg-gray-800">
+    <div class="flex w-lg gap-4 flex-col py-8 px-6 bg-white rounded border border-gray-600 shadow">
+        <h1 class="text-xl mb-2 border-b pb-2 font-semibold">Your Uploads</h1>
+        {% if not uploads %}
+        <div class="h-32 w-full flex flex-col gap-1 text-center">
+            <div class="text-lg text-gray-800 font-semibold">Your upload list is empty</div>
+            <div class="text-gray-700 font-light">Upload your files and remove local copies, safe fast and secure.
+            </div>
+            
+            <a class="rounded h-10 text-white bg-gray-800 flex justify-center items-center mt-6 w-full" href="/upload">
+                Upload
+            </a>
+        </div>
+        {% else %}
+        <div class="max-h-[85vh] overflow-y-auto flex flex-col gap-2">
+            {% for upload in uploads %}
+            <div class="max-w-xl rounded bg-gray-50 p-4 shadow border border-gray-200">
+                <div class="flex gap-1 items-center">
+                    <div class="text-sm font-semibold text-gray-700">Root:</div>
+                    <div class="text-sm truncate text-orange-300 bg-gray-100">{{upload.root_hash}}</div>
+                    <div class="text-sm font-semibold text-gray-700">Uploaded:</div>
+                    <div class="timestamp text-xs">{{upload.timestamp}}</div>
+                </div>
+                <div class="flex gap-1 gap-2">
+                    <div class="font-semibold text-gray-700 text-sm">
+                        Files:
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        {% for file, hash in upload.files %}
+                        <a class="text-blue-400 font-italic underline truncate text-sm" download="{{file}}"
+                           href="/get-file?root={{upload.root_hash}}&file_hash={{hash}}">
+                            {{ file }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <a class="rounded h-10 text-white bg-gray-800 flex justify-center items-center mt-6 w-full" href="/upload">
+                Add More Files
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    const ts = document.getElementsByClassName('timestamp');
+    for (const t of ts) {
+        const date = new Date(+t.innerHTML);
+        t.innerHTML = date.toLocaleString()
+    }
+
+</script>
+</body>
+</html>

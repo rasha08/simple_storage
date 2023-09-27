@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "7fe3f08c-f3fc-40cb-8788-6968a47e2dbd",
+		"name": "Anari Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2807990",
+		"_collection_link": "https://planetary-trinity-396538.postman.co/workspace/Comae~fb571ebe-2f01-4b5f-932c-ebfbbb8718e3/collection/2807990-7fe3f08c-f3fc-40cb-8788-6968a47e2dbd?action=share&source=collection_link&creator=2807990"
+	},
+	"item": [
+		{
+			"name": "Parallel Query With Cohere rerank",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"collect\": {\n            \"sessions\": [\n                {\n                    \"query\": {\n                        \"id\": {\n                            \"eq\": 2\n                        }\n                    },\n                    \"selection\": {\n                        \"id\": true,\n                        \"name\": true\n                    },\n                    \"root\": \"Users\"\n                },\n                {\n                    \"query\": {\n                        \"Timestamp\": {\n                            \"gt\": \"2023-09-04\"\n                        },\n                        \"UserID\": {\n                            \"eq\": {\n                                \"resultingRowPath\": [\n                                    \"id\"\n                                ]\n                            }\n                        }\n                    },\n                    \"selection\": {\n                        \"User\": {\n                            \"resultingRowPath\": [\n                                \"name\"\n                            ]\n                        },\n                        \"ActionSummary\": {\n                            \"dataPath\": [],\n                            \"transformer\": \". = join!([\\\"User\\\", .User, \\\"has done action \\\", .ActionType, \\\"on\\\", .Timestamp, \\\"on a product from category\\\", .Category, \\\"and sub category\\\", .SubCategory], \\\" \\\")\",\n                            \"own\": true\n                        },\n                        \"ProductID\": true,\n                        \"Category\": true,\n                        \"ActionType\": true,\n                        \"SubCategory\": true,\n                        \"Timestamp\": true\n                    },\n                    \"root\": \"SessionRecord\"\n                },\n                {\n                    \"selection\": {\n                        \"actions\": {\n                            \"resultingRowPath\": [\n                                \"ActionSummary\"\n                            ]\n                        }\n                    }\n                }\n            ],\n            \"documents\": [\n                {\n                    \"query\": {\n                        \"embeding\": {\n                            \"post\": {\n                                \"value\": \"convert\",\n                                \"metadata\": {\n                                    \"body\": {\n                                        \"text\": \"Men Navy Blue Shirt\"\n                                    }\n                                }\n                            }\n                        }\n                    },\n                    \"selection\": {},\n                    \"root\": \"Text2Embedding\"\n                },\n                {\n                    \"query\": {\n                        \"text_embedding\": {\n                            \"nearestNeighbor\": {\n                                \"resultingRowPath\": [\n                                    \"embedding\"\n                                ],\n                                \"metadata\": {\n                                    \"input\": \"q_embedding\",\n                                    \"targetHits\": 1\n                                }\n                            }\n                        }\n                    },\n                    \"selection\": {\n                        \"*\": true,\n                        \"DocumentSummary\": {\n                            \"dataPath\": [],\n                            \"transformer\": \". = join!([.productDisplayName, \\\" from category \\\", .masterCategory, \\\" and subcategory \\\", .subCategory, \\\" in color \\\", .baseColour, \\\" suitable for seasson \\\", .season, \\\" in \\\", .usage, \\\" occasions\\\"])\",\n                            \"own\": true\n                        }\n                    },\n                    \"root\": \"Product\"\n                },\n                {\n                    \"selection\": {\n                        \"documents\": {\n                            \"resultingRowPath\": [\n                                \"DocumentSummary\"\n                            ]\n                        },\n                        \"raw\": {\n                            \"resultingRowPath\": []\n                        }\n                    }\n                }\n            ]\n        },\n        \"remap\": {\n            \"selection\": {\n                \"prompt\": {\n                    \"value\": \"Men Navy Blue Shirt\"\n                },\n                \"ctx\": {\n                    \"resultingRowPath\": [\n                        \"sessions\",\n                        \"actions\"\n                    ]\n                },\n                \"documents\": {\n                    \"resultingRowPath\": [\n                        \"documents\",\n                        \"documents\"\n                    ]\n                },\n                \"raw\": {\n                    \"resultingRowPath\": [\n                        \"documents\",\n                        \"raw\"\n                    ]\n                }\n            }\n        }\n    },\n        {\n        \"query\": {\n            \"rerank\": {\n                \"resultingRowPath\": []\n            }\n        },\n        \"selection\": {\n            \"*\": true\n        },\n        \"root\": {\n            \"sync\": \"Cohere\",\n            \"name\": \"Reranker\"\n        }\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://syncraft.ai/demo/e-commerce/query",
+					"protocol": "https",
+					"host": [
+						"syncraft",
+						"ai"
+					],
+					"path": [
+						"demo",
+						"e-commerce",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Serial pipeline with cohere rerank",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"query\": {\n            \"embeding\": {\n                \"post\": {\n                    \"value\": \"convert\",\n                    \"metadata\": {\n                        \"body\": {\n                            \"text\": \"Men Navy Blue Shirt\"\n                        }\n                    }\n                }\n            }\n        },\n        \"selection\": {},\n        \"root\": \"Text2Embedding\"\n    },\n    {\n        \"query\": {\n            \"text_embedding\": {\n                \"nearestNeighbor\": {\n                    \"resultingRowPath\": [\n                        \"embedding\"\n                    ],\n                    \"metadata\": {\n                        \"input\": \"q_embedding\",\n                        \"targetHits\": 1\n                    }\n                }\n            }\n        },\n        \"selection\": {\n            \"*\": true,\n            \"DocumentSummary\": {\n                \"dataPath\": [],\n                \"transformer\": \". = join!([.productDisplayName, \\\" from category \\\", .masterCategory, \\\" and subcategory \\\", .subCategory, \\\" in color \\\", .baseColour, \\\" suitable for seasson \\\", .season, \\\" in \\\", .usage, \\\" occasions\\\"])\",\n                \"own\": true\n            }\n        },\n        \"root\": \"Product\"\n    },\n    {\n        \"selection\": {\n            \"raw\": {\n                \"resultingRowPath\": []\n            }\n        }\n    },\n    {\n        \"selection\": {\n            \"raw\": {\n                \"resultingRowPath\": [\n                    \"raw\"\n                ]\n            },\n            \"documents\": {\n                \"resultingRowPath\": [\n                    \"raw\",\n                    \"DocumentSummary\"\n                ]\n            }\n        }\n    },\n    {\n        \"collect\": {\n            \"sessions\": [\n                {\n                    \"query\": {\n                        \"id\": {\n                            \"eq\": 2\n                        }\n                    },\n                    \"selection\": {\n                        \"id\": true,\n                        \"name\": true\n                    },\n                    \"root\": \"Users\"\n                },\n                {\n                    \"query\": {\n                        \"Timestamp\": {\n                            \"gt\": \"2023-09-04\"\n                        },\n                        \"UserID\": {\n                            \"eq\": {\n                                \"resultingRowPath\": [\n                                    \"id\"\n                                ]\n                            }\n                        }\n                    },\n                    \"selection\": {\n                        \"User\": {\n                            \"resultingRowPath\": [\n                                \"name\"\n                            ]\n                        },\n                        \"ActionSummary\": {\n                            \"dataPath\": [],\n                            \"transformer\": \". = join!([\\\"User\\\", .User, \\\"has done action \\\", .ActionType, \\\"on\\\", .Timestamp, \\\"on a product from category\\\", .Category, \\\"and sub category\\\", .SubCategory], \\\" \\\")\",\n                            \"own\": true\n                        },\n                        \"ProductID\": true,\n                        \"Category\": true,\n                        \"ActionType\": true,\n                        \"SubCategory\": true,\n                        \"Timestamp\": true\n                    },\n                    \"root\": \"SessionRecord\"\n                },\n                {\n                    \"selection\": {\n                        \"actions\": {\n                            \"resultingRowPath\": [\n                                \"ActionSummary\"\n                            ]\n                        }\n                    }\n                }\n            ]\n        },\n        \"remap\": {\n            \"selection\": {\n                \"raw\": {\n                    \"resultingRowPath\": [\n                        \"raw\"\n                    ]\n                },\n                \"documents\": {\n                    \"resultingRowPath\": [\n                        \"documents\"\n                    ]\n                },\n                \"ctx\": {\n                    \"resultingRowPath\": [\n                        \"sessions\",\n                        \"actions\"\n                    ]\n                },\n                \"prompt\": {\n                    \"value\": \"Men Navy Blue Shirt\"\n                }\n            }\n        }\n    },\n    {\n        \"query\": {\n            \"rerank\": {\n                \"resultingRowPath\": []\n            }\n        },\n        \"selection\": {\n            \"*\": true\n        },\n        \"root\": {\n            \"sync\": \"Cohere\",\n            \"name\": \"Reranker\"\n        }\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://syncraft.ai/demo/e-commerce/query",
+					"protocol": "https",
+					"host": [
+						"syncraft",
+						"ai"
+					],
+					"path": [
+						"demo",
+						"e-commerce",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cross sync relations",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": {\n        \"id\": {\n            \"eq\": 2\n        },\n        \"sessions\": {\n            \"query\": {\n                \"Timestamp\": {\n                    \"gt\": \"2023-09-04\"\n                },\n                \"UserID\": {\n                    \"eq\": {\n                        \"resultingRowPath\": [\n                            \"id\"\n                        ]\n                    }\n                }\n            },\n            \"selection\": {\n                \"UserID\": true,\n                \"ProductID\": true,\n                \"Category\": true,\n                \"ActionType\": true,\n                \"SubCategory\": true,\n                \"Season\": true,\n                \"Timestamp\": true\n            }\n        }\n    },\n    \"selection\": {\n        \"id\": true,\n        \"name\": true\n    },\n    \"root\": \"Users\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://syncraft.ai/demo/e-commerce/query",
+					"protocol": "https",
+					"host": [
+						"syncraft",
+						"ai"
+					],
+					"path": [
+						"demo",
+						"e-commerce",
+						"query"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  fclient:
+    build:
+      context: .
+      dockerfile: ./fclient/Dockerfile
+    environment:
+      - EXTERNAL_SERVICE_URL=http://fserver:3000
+    ports:
+      - "3001:3001"
+
+  fserver:
+    build:
+      context: .
+      dockerfile: ./fserver/Dockerfile
+
+    ports:
+      - "3000:3000"
+

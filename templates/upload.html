@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>File Uploader</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="flex h-screen w-screen flex-col items-center justify-center bg-gray-800">
+    <div class="flex w-lg gap-4 flex-col py-8 px-6 bg-white rounded border border-gray-600 shadow">
+        <h1 class="text-xl mb-2 border-b pb-2 font-semibold">Upload your files</h1>
+        <form action="/upload" enctype="multipart/form-data" method="post">
+            <label
+                    class="mb-2 inline-block text-gray-700"
+                    for="files">
+                Choose Your Files
+            </label>
+            <input
+                    class="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
+                    id="files"
+                    multiple
+                    name="files"
+                    type="file"
+            />
+            
+            <button class="rounded h-10 text-white bg-gray-800 flex justify-center items-center mt-6 w-full"
+                    type="submit">
+                Confirm
+            </button>
+        </form>
+        
+        <p class="text-orange-500 text-sm border-t pt-2 ">* After the upload process is complete your local files will
+            be
+            deleted</p>
+    </div>
+</div>
+
+</body>
+</html>

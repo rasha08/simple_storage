@@ -1,0 +1,1 @@
+Use Zama's fhEVM to enable confidential smart contracts in your blockchain, unlocking new use cases in DeFi, gaming and more!

@@ -1,0 +1,6 @@
+./**/*_db
+./**/target
+./**/.idea
+./fserver/files
+target
+.idea
